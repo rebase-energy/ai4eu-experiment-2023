@@ -1,0 +1,51 @@
+//Define the used version of proto
+syntax = "proto3";
+
+
+message TimeseriesInput {
+    repeated string timestamp = 1;
+    repeated float provider_a = 2;
+    repeated float provider_b = 3;
+    repeated float target = 4;
+}
+
+message Input {
+    TimeseriesInput timeseries = 1;
+    int32 nr_regimes = 2;
+}
+
+
+message WeightedMean {
+    repeated string timestamp = 1;
+    repeated float value = 2; 
+}
+
+
+message Meta {
+    int32 n_train = 1;
+    float mae_train = 2;
+}
+
+
+message ProviderWeight {
+    float provider_a = 1;
+    float provider_b = 2;
+}
+
+message WeightRow {
+    repeated int32 hours = 1;
+    ProviderWeight weights = 2;
+    Meta meta = 3;
+}
+
+
+message Result {
+    WeightedMean weighted_mean = 1;
+    repeated WeightRow weights = 2;
+
+}
+
+//Define the service
+service RebaseModel {
+    rpc Blend(Input) returns (Result);
+}

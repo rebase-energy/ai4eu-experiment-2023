@@ -1,0 +1,29 @@
+//Define the used version of proto
+syntax = "proto3";
+
+
+message PredictInput {
+    string train_set = 1;
+    string pred_set = 2;
+}
+
+message EvalInput {
+    string train_set = 1;
+    string valid_set = 2;
+}
+
+message Metrics {
+    string score = 1;
+}
+
+message Result {
+    repeated string ref_datetime = 1;
+    repeated string valid_datetime = 2;
+    repeated float target = 3 ;
+}
+
+//Define the service
+service RebaseModel {
+    rpc Predict(PredictInput) returns (Result);
+    rpc Evaluate(EvalInput) returns (Metrics);
+}

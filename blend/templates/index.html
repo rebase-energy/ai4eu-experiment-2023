@@ -1,0 +1,145 @@
+<html>
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="static/css/main3.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"
+        integrity="sha512-zInFF17qBFVvvvFpIfeBzo7Tj7+rQxLeTJDmbxjBz5/zIr89YVbTNelNhdTT+/DCrxoVzBeUPVFJsczKbB7sew=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+
+<body>
+
+
+    <div>
+        <h2 style="margin-top: 64px; width: 100%">
+            Model blend
+        </h2>
+        <p>
+            Upload a train set to calculate weights. 
+        </p>
+        <form id="input_form_train" class="flex-row" style="max-width: 1200px " action="/"">
+
+            <div>
+                <label for='train_set'>
+                    Train set
+                </label>
+                <div>
+                    <input id='train_file' type='file' style=" margin-bottom: 16px; width: 600px" />
+
+                </div>
+
+            </div>
+        
+        <div style="margin-left: 16px;">
+            <label for="test">
+                Number of regimes
+            </label>
+            <div class="flex-row" id="test">
+                <div id="btn_regime_decr" class="button-increment">
+                    -
+                </div>
+                <p id="regime_nr" style="width: 40px; text-align: center; font-weight: bold">
+                    4
+                </p>
+                <div id="btn_regime_incr" class="button-increment">
+                    +
+                </div>
+            </div>
+        </div>
+        <div style="margin-left: 32px;">
+
+            <button id='btn_train' type="submit" style="margin-top: 8px">
+                CALCULATE
+            </button>
+        </div>
+
+        </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    Hour
+                </th>
+                <th>
+                    Provider A
+                </th>
+                <th>
+                    Provider B
+                </th>
+            </tr>
+        </thead>
+        <tbody id="weight-table">
+
+        </tbody>
+    </table>
+    <hr/>
+    <h3 style="margin-top: 64px">
+        Weighted mean
+    </h3>
+    <div style="margin-top: 32px; margin-bottom: 64px">
+        <p>
+            Apply the the weights to a new timeseries
+        </p>
+        <form id="input_form_predict" class="flex-row" style="max-width: 1200px " action="/"">
+            <div>
+
+            <input id='pred_file' type='file' style=" margin-bottom: 16px" />
+
+        <button id='btn_predict' type="submit" style="margin-top: 20px;">
+            APPLY
+        </button>
+        </form>
+        <canvas id="myChart" width="1200" height="400"></canvas>
+        <div class="flex-row" style="margin-top: 32px">
+            <div style="flex: 1"></div>
+            <a href='/download/result' download="" style="text-decoration: none">
+                <Button>
+                DOWNLOAD
+                </Button>
+
+            </a>
+
+        </div>
+    </div>
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: []
+            },
+            options: {
+                //parsing: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            maxTicksLimit: 6,
+                            maxRotation: 0,
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                    axis: 'x', // extremely important to hover multiple datasets
+                    intersect: false,
+                }
+            }
+            }
+        });
+    </script>
+    <script src="static/js/api.js"></script>
+
+</body>
+
+</html>

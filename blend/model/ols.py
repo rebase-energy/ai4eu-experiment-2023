@@ -1,7 +1,9 @@
 import cvxpy as cp
 import numpy as np
 
-def weighting_least_squares_abstact(n_row,n_col):
+# Use of norm instead of sum_square: http://cvxr.com/cvx/doc/advanced.html#eliminating-quadratic-forms
+
+def weighting_least_squares_abstract(n_row,n_col):
     
     # Define variables
     x = cp.Variable(n_col, name='x')
@@ -9,9 +11,9 @@ def weighting_least_squares_abstact(n_row,n_col):
     A = cp.Parameter((n_row, n_col), name='A')
     b = cp.Parameter((n_row), name='b')
     # Define objective
-    objective = cp.Minimize(cp.sum_squares(A @ x - b))
+    objective = cp.Minimize(cp.norm(A @ x - b))
     # Define constraints
-    constraints = [0 <= x, x <= 1, cp.sum(x) == 1]
+    constraints = [x >= 0, sum(x) == 1]
     # Define model
     m = cp.Problem(objective, constraints)
     
@@ -22,9 +24,9 @@ def weighting_least_squares_concrete(A,b):
     # Construct the problem.
     x = cp.Variable(np.size(A,1), name='x')
     # Define objective
-    objective = cp.Minimize(cp.sum_squares(A @ x - b))
+    objective = cp.Minimize(cp.norm(A @ x - b))
     # Define constraints
-    constraints = [0 <= x, x <= 1, sum(x) == 1]
+    constraints = [x >= 0, sum(x) == 1]
     # Define model
     m = cp.Problem(objective, constraints)
     # Solve model
@@ -35,7 +37,7 @@ def weighting_least_squares_concrete(A,b):
 
     return weights, optvalue
 
-def linearcombination_abstact(n_row,n_col):
+def linearcombination_abstract(n_row,n_col):
     
     # Define variables
     x = cp.Variable(n_col, name='x')
@@ -44,7 +46,7 @@ def linearcombination_abstact(n_row,n_col):
     A = cp.Parameter((n_row, n_col), name='A')
     b = cp.Parameter((n_row), name='b')
     # Define objective
-    objective = cp.Minimize(cp.sum_squares(A @ x + x0 - b))
+    objective = cp.Minimize(cp.norm(A @ x + x0 - b))
     # Define model
     m = cp.Problem(objective)
     
@@ -56,7 +58,7 @@ def linearcombination_concrete(A,b):
     x = cp.Variable(np.size(A,1), name='x')
     x0 = cp.Variable(1, name='x0')
     # Define objective
-    objective = cp.Minimize(cp.sum_squares(A @ x + x0 - b))
+    objective = cp.Minimize(cp.norm(A @ x + x0 - b))
     # Define model
     m = cp.Problem(objective)
     # Solve model

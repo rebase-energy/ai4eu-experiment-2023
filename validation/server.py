@@ -45,7 +45,7 @@ def serve():
         RebaseValidationServicer(), server)
     server.add_insecure_port(f'[::]:{config.PORT}')
     server.start()
-    #threading.Thread(target=run()).start()
+    threading.Thread(target=run()).start()
     server.wait_for_termination()
 
 

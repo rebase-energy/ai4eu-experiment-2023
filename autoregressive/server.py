@@ -33,8 +33,11 @@ class RebaseModelService(model_pb2_grpc.RebaseModelServicer):
 
         
         df = forecast(fit_results, pred_df, int(request.nr_steps))
+        print(df)
+        return model_pb2.Result(
+            result=df.to_json()
+        )
 
-        return df.to_json()
 
 
 

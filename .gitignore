@@ -2,5 +2,9 @@ env
 debug
 __pycache__
 blend/out
+validation/out
+autoregressive/out
 temp
 tempfiles
+
+.DS_Store

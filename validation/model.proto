@@ -1,0 +1,19 @@
+//Define the used version of proto
+syntax = "proto3";
+
+
+
+
+message Input {
+    string dataframe = 1;
+    string rules = 2;
+}
+
+message Result {
+    string validation_result = 1;
+}
+
+//Define the service
+service RebaseValidation {
+    rpc Validate(Input) returns (Result);
+}

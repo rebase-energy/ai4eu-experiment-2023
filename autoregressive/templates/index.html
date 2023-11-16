@@ -17,10 +17,10 @@
 
     <div>
         <h2 style="margin-top: 64px; width: 100%">
-            Model blend
+            Autoregressive model
         </h2>
         <p>
-            Upload a train set to calculate weights. 
+            Upload a train set 
         </p>
         <form id="input_form_train" class="flex-row" style="max-width: 1200px " action="/"">
 
@@ -35,85 +35,68 @@
 
             </div>
         
-        <div style="margin-left: 16px;">
-            <label for="test">
-                Number of regimes
-            </label>
-            <div class="flex-row" id="test">
-                <div id="btn_regime_decr" class="button-increment">
-                    -
-                </div>
-                <p id="regime_nr" style="width: 40px; text-align: center; font-weight: bold">
-                    4
-                </p>
-                <div id="btn_regime_incr" class="button-increment">
-                    +
-                </div>
-            </div>
-        </div>
         <div style="margin-left: 32px;">
 
             <button id='btn_train' type="submit" style="margin-top: 8px">
-                CALCULATE
+                TRAIN
             </button>
         </div>
 
         </form>
-
-    <table>
-        <thead>
-            <tr>
-                <th>
-                    Hour
-                </th>
-                <th>
-                    Provider A
-                </th>
-                <th>
-                    Provider B
-                </th>
-            </tr>
-        </thead>
-        <tbody id="weight-table">
-
-        </tbody>
-    </table>
     <hr/>
     <h3 style="margin-top: 64px">
-        Weighted mean
+        Predict
     </h3>
     <div style="margin-top: 32px; margin-bottom: 64px">
         <p>
-            Apply the the weights to new forecasts
+            Upload timeseries to predict the next steps
         </p>
         <form id="input_form_predict" class="flex-row" style="max-width: 1200px " action="/"">
             <div>
 
             <input id='pred_file' type='file' style=" margin-bottom: 16px" />
 
+            <p>
+                Number of steps ahead
+            </p>
+            <input id="input_nr_steps" value="5" style=" margin-bottom: 16px; width: 120px"/>
         <button id='btn_predict' type="submit" style="margin-top: 20px;">
-            APPLY
+            PREDICT
         </button>
         </form>
+        <h4 style="margin-top: 64px">
+            Result
+        </h4>
+        <table style="margin-top: 32px">
+            <thead id="pred-table-head">
+            </thead>
+            <tbody id="pred-table">
+    
+            </tbody>
+        </table>
         <canvas id="myChart" width="1200" height="400"></canvas>
-        <div class="flex-row" style="margin-top: 32px">
-            <div style="flex: 1"></div>
 
-        </div>
+
     </div>
-    <a href='/download' download="" style="text-decoration: none">
-        <button id="download">
-        DOWNLOAD
-        </button>
+    <div style="margin-top: 32px">
+        <a href='/download' download="" style="text-decoration: none;">
+            <Button>
+            DOWNLOAD
+            </Button>
 
-    </a>
-
+        </a>
+    </div>
     <script>
         const ctx = document.getElementById('myChart').getContext('2d');
         const myChart = new Chart(ctx, {
             type: 'line',
             data: {
-                datasets: []
+                datasets: [
+                    // {
+                    //     label: "",
+                    //     data: [{'x': '2023-09-12 00:00', 'y': 3666.66}, {'x': '2023-09-12 00:05', 'y': 3333.34}, {'x': '2023-09-12 00:10', 'y': 3000.0}, {'x': '2023-09-12 00:15', 'y': 2333.34}, {'x': '2023-09-12 00:20', 'y': 2000.0}, {'x': '2023-09-12 00:25', 'y': 1666.666}, {'x': '2023-09-12 00:30', 'y': 1333.3339999999998}, {'x': '2023-09-12 00:35', 'y': 1333.3339999999998}, {'x': '2023-09-12 00:40', 'y': 2333.34}, {'x': '2023-09-12 00:45', 'y': 3000.0}, {'x': '2023-09-12 00:50', 'y': 3666.66}, {'x': '2023-09-12 00:55', 'y': 3666.66}]
+                    // }
+                ]
             },
             options: {
                 //parsing: false,
@@ -124,6 +107,7 @@
                 },
                 scales: {
                     x: {
+                        type: 'linear',
                         ticks: {
                             maxTicksLimit: 6,
                             maxRotation: 0,
@@ -134,12 +118,15 @@
                     tooltip: {
                     axis: 'x', // extremely important to hover multiple datasets
                     intersect: false,
+                    legend: {
+                        display: false
+                    }
                 }
             }
             }
         });
     </script>
-    <script src="static/js/api.js"></script>
+    <script src="static/js/api3.js"></script>
 
 </body>
 

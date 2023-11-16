@@ -1,7 +1,7 @@
-data <- read.csv("data/AEMO1213.csv", header=TRUE, stringsAsFactors=FALSE)
+data <- read.csv("../debug/data/AEMO1213.csv", header=TRUE, stringsAsFactors=FALSE)
 
 
-fit = readRDS('R/fit.RData')
+fit = readRDS('fit.RData')
 
 print(typeof(data))
 
@@ -57,4 +57,6 @@ for(i in test){
   pred[i-tail(train,1),] <- data[i,] - B %*% t(data[(i-1):(i-lags),])[1:(K*lags)]
 }
 
-head(pred, 10)
+
+tail(pred, 100)
+#head(pred, 10)

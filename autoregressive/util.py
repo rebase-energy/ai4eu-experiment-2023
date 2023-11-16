@@ -10,6 +10,7 @@ from rpy2.robjects.conversion import localconverter
 import os
 
 
+
 def convert_df_dates_from_r(df: pd.DataFrame, date_cols: 'list[str]' = None) -> pd.DataFrame:
    """ convert given date columns into pandas datetime with UTC timezone
 
@@ -113,3 +114,20 @@ def convert_from_r(item: Any, date_cols: 'list[str]' = None, name: str = '', res
    if '__len__' in result.__dir__() and len(result) == 1 and remove_list:
        result = result[0]
    return result
+
+
+
+def install():
+    utils = rpackages.importr("utils")
+
+    packnames = ('ff', 'MASS')
+    # Selectively install what needs to be install.
+    names_to_install = [x for x in packnames if not rpackages.isinstalled(x)]
+    if len(names_to_install) > 0:
+        utils.install_packages(StrVector(names_to_install))
+
+    rpackages.importr("ff")
+    rpackages.importr("MASS")
+
+    ro.r('source("autoregressive/R/sVAR-opt.R")')
+

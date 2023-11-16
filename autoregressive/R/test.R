@@ -1,8 +1,8 @@
-data <- read.csv("data/AEMO1213.csv", header=TRUE, stringsAsFactors=FALSE)
+data <- read.csv("../debug/data/AEMO1213.csv", header=TRUE, stringsAsFactors=FALSE)
 
 
 
-source("R/sVAR-opt.R")
+source("sVAR-opt.R")
 
 
 # only use 10 sites to save some time...

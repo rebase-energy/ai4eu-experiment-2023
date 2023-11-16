@@ -1,0 +1,59 @@
+<html>
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="static/css/main4.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"
+        integrity="sha512-zInFF17qBFVvvvFpIfeBzo7Tj7+rQxLeTJDmbxjBz5/zIr89YVbTNelNhdTT+/DCrxoVzBeUPVFJsczKbB7sew=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+
+<body>
+
+
+    <div>
+        <h2 style="margin-top: 64px; width: 100%">
+            Data valdation
+        </h2>
+        <p>
+            Using Great Expectations
+        </p>
+        <input id='row-counter' hidden/>
+        <input id='input_columns' value="0" hidden/>
+        <form id="input_form" class="flex-row" style=" max-width: 1200px " action="/"">
+            <div style="min-width: 700px;">
+
+            <input id='data_file' type='file' style=" margin-bottom: 16px" />
+
+            <div id="expectations_list">
+            </div>
+            <hr/>
+            <button id="btn-add" style="visibility: hidden; font-size: 10px">
+                + ADD ANOTHER
+            </button>
+            
+
+        <button id='btn_upload' type="submit" style="margin-top: 48px; margin-bottom: 16px">
+            VALIDATE
+        </button>
+        </form>
+        <div style="max-height: 800px; height: 800px; overflow-y: scroll; display: block">
+            <table>
+                <thead id="result-thead">
+                </thead>
+                <tbody id="result-tbody">
+        
+                </tbody>
+            </table>
+        </div>
+
+    <hr/>
+    <script src="static/js/api2.js"></script>
+
+</body>
+
+</html>

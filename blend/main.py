@@ -72,12 +72,31 @@ async def blend(request: Request, pred_file: UploadFile):
 
             print(df_merged)
 
-            return df_merged.reset_index().to_dict(orient='records')
+            clean_df = df_merged.reset_index()
+            clean_df.to_csv('blend/out/latest.csv', index=False)
+
+            return clean_df.to_dict(orient='records')
 
     except Exception as e:
         print(e)
 
 
+
+@app.get("/download")
+async def download(request: Request):
+    df = pd.read_csv('blend/out/latest.csv')
+    print(df)
+    stream = io.StringIO()  
+    df.to_csv(stream, index=False)
+    
+    response = StreamingResponse(iter([stream.getvalue()]),
+                            media_type="text/csv"
+    )
+    
+    name = 'latest'
+    response.headers["Content-Disposition"] = f"attachment; filename={name}.csv"
+
+    return response      
 
 
 def run():

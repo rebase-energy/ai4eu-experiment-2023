@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import model_pb2 as model__pb2
+from autoregressive import model_pb2 as autoregressive_dot_model__pb2
 
 
 class RebaseModelStub(object):
@@ -15,15 +15,15 @@ class RebaseModelStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.Train = channel.unary_unary(
+                '/RebaseModel/Train',
+                request_serializer=autoregressive_dot_model__pb2.TrainInput.SerializeToString,
+                response_deserializer=autoregressive_dot_model__pb2.Empty.FromString,
+                )
         self.Predict = channel.unary_unary(
                 '/RebaseModel/Predict',
-                request_serializer=model__pb2.PredictInput.SerializeToString,
-                response_deserializer=model__pb2.Result.FromString,
-                )
-        self.Evaluate = channel.unary_unary(
-                '/RebaseModel/Evaluate',
-                request_serializer=model__pb2.EvalInput.SerializeToString,
-                response_deserializer=model__pb2.Metrics.FromString,
+                request_serializer=autoregressive_dot_model__pb2.PredInput.SerializeToString,
+                response_deserializer=autoregressive_dot_model__pb2.Result.FromString,
                 )
 
 
@@ -31,13 +31,13 @@ class RebaseModelServicer(object):
     """Define the service
     """
 
-    def Predict(self, request, context):
+    def Train(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Evaluate(self, request, context):
+    def Predict(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -46,15 +46,15 @@ class RebaseModelServicer(object):
 
 def add_RebaseModelServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'Train': grpc.unary_unary_rpc_method_handler(
+                    servicer.Train,
+                    request_deserializer=autoregressive_dot_model__pb2.TrainInput.FromString,
+                    response_serializer=autoregressive_dot_model__pb2.Empty.SerializeToString,
+            ),
             'Predict': grpc.unary_unary_rpc_method_handler(
                     servicer.Predict,
-                    request_deserializer=model__pb2.PredictInput.FromString,
-                    response_serializer=model__pb2.Result.SerializeToString,
-            ),
-            'Evaluate': grpc.unary_unary_rpc_method_handler(
-                    servicer.Evaluate,
-                    request_deserializer=model__pb2.EvalInput.FromString,
-                    response_serializer=model__pb2.Metrics.SerializeToString,
+                    request_deserializer=autoregressive_dot_model__pb2.PredInput.FromString,
+                    response_serializer=autoregressive_dot_model__pb2.Result.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -68,6 +68,23 @@ class RebaseModel(object):
     """
 
     @staticmethod
+    def Train(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/RebaseModel/Train',
+            autoregressive_dot_model__pb2.TrainInput.SerializeToString,
+            autoregressive_dot_model__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def Predict(request,
             target,
             options=(),
@@ -79,24 +96,7 @@ class RebaseModel(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/RebaseModel/Predict',
-            model__pb2.PredictInput.SerializeToString,
-            model__pb2.Result.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def Evaluate(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RebaseModel/Evaluate',
-            model__pb2.EvalInput.SerializeToString,
-            model__pb2.Metrics.FromString,
+            autoregressive_dot_model__pb2.PredInput.SerializeToString,
+            autoregressive_dot_model__pb2.Result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

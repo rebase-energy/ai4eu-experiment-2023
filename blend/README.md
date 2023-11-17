@@ -1,7 +1,13 @@
 
 This project has received funding from the European Union's Horizon 2020 research and innovation programme within the framework of the I-NERGY Project, funded under grant agreement No 101016508
 
-## What is the Rebase Dataset Broker?
+## Blend model
+
+This mode combines the two algorithms: Time Regime Switching and a Blending algorithm.
+
+The time regime switching algorithm splits the forecasts into groups based on the hour of the day and calculates separate blending weights for each group. The reasoning behind this algorithm is that some forecasts perform better during a specific period of the day (e.g. night hours) and some others during another period of the day (e.g. day hours).
+
+The blending algorithm can be used to calculate the weighted average of multiple time-series. This can help in cases where multiple forecasts are available for a specific target (e.g. from various models, vendors, etc.). The combination of multiple forecasts usually reduces the forecast error.
 
 
 # Deploy
@@ -9,7 +15,7 @@ This project has received funding from the European Union's Horizon 2020 researc
 ## Kubernetes
 You can deploy this in Kubernetes
 
-1. Go to the asset [here](https://aiexp.ai4europe.eu/#/marketSolutions?solutionId=a514218c-d37f-4c38-a06d-c60a267eda42&revisionId=8ad34ae9-6fd3-4815-b890-99d6f22bf929&parentUrl=marketplace#md-model-detail-template)
+1. Go to the asset [here](https://aiexp.ai4europe.eu/#/marketSolutions?solutionId=66612c50-ad86-4c96-8913-74d5d050f162&revisionId=03a1e104-6e93-409a-8da9-9f9f58dc29f5&parentUrl=mymodel#md-model-detail-template)
 
 2. Click on "Deploy for Execution" in the top right corner, or "Sign In To Download" first if you're not logged in
 
@@ -41,31 +47,59 @@ This will start the gRPC server at http://localhost:8061 and UI at http://localh
 
 Run:
 
-``python -m client``
+``python -m blend.client``
 
-The LoadData rpc method as described in model.proto, returns:
-* train_set
-* valid_set
+The Blend rpc method as described in model.proto, accepts this as input:
 
-as 2 JSON strings, where each JSON string represents an object with the following format:
-
-```json
-{
-    "ref_datetime": ["2021-01-01 00:00", "2021-01-01 00:00", ...],
-    "valid_datetime": ["2021-01-01 00:00", "2021-01-01 01:00", ...],
-    "target": [133.1, 122.7, ...],
-    "feature_0": [11.2, 9.7, ...],
-    ...
-    "feature_n": [23.1, 17.9, ...]
+```
+Input {
+    TimeseriesInput timeseries = 1;
+    int32 nr_regimes = 2;
 }
 ```
 
-ref_datetime, valid_datetime and target are always returned in the data. There might be other features of same length depending on if the dataset has those features in Rebase Energy datasets.
+Where nr_regimes is an integer that determines how many splits that will be made. 
 
-- **ref_datetime** - the point in time that the features were available to you, etc if you are using weather forecasts, it represents at what point in time you would have gotten those features from the forecast
-- **valid_datetime** - the timestamp when the each feature value rows was valid
-- **target** - the target to predict
-- **features_0/features_n** - optional features of same length
+And timeseries has the following format:
+
+```
+TimeseriesInput {
+    repeated string timestamp = 1;
+    repeated float provider_a = 2;
+    repeated float provider_b = 3;
+    repeated float target = 4;
+}
+```
+
+It accepts a forecasts from two providers A and B, as well as a target and timestamps.
+
+For example:
+
+```
+timestamp = ['2023-11-15 00:00', '2023-11-15 01:00', ...]
+provider_a = [1923.2, 1841.9, ...]
+provider_b = [1739.6, 1723.3, ...]
+target = [1872.13, 1852.0, ...]
+```
+
+It then returns the weighted mean of that timeseries and the meta information with the weights:
+
+```
+Result {
+    WeightedMean weighted_mean = 1;
+    repeated WeightRow weights = 2;
+
+}
+```
+
+Eeach Weight Row returns a list range of hours to the weight should be applied to:
+
+For example:
+```
+{hours: [0, 8], providerWeight: {a: 0.3, b: 0.7}, meta: {n_train: 5, mae_train: 2341.4}},
+{hours: [8, 16], providerWeight: {a: 0.24, b: 0.74}, meta: {n_train: 5, mae_train: 20123.3}},
+{hours: [17, 24], providerWeight: {a: 0.54, b: 0.46}, meta: {n_train: 5, mae_train: 17432.1}},
+```
 
 
 
@@ -74,7 +108,7 @@ ref_datetime, valid_datetime and target are always returned in the data. There m
 If you use this code and change anything in the protocol **model.proto**, you need to generate the new stubs:
 
 ```
-python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. model.proto
+./blend/restub.sh
 ```
 
 
